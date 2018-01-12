@@ -1,37 +1,50 @@
 clear all;
 close all;
 
-function [X,Y] = generateInputOutput(inputCount, theoricalTheta)
-  X= [(1:inputCount)'.^2, (1:inputCount)', ones(1, inputCount)'];
+%-- Generate learning set: data are following curve A0 + A1*x +A2*x² + ... + An*x^n with n = length (theorical theta) --
+function [X,Y] = generateInputOutput(learningSetCount, theoricalTheta)
+  for i=1:length(theoricalTheta)
+    X(:,i) = ((1:learningSetCount).^(i-1))';
+  end
+  
   noise = max(max(abs(X)))/10
-  Y= (X + rand(inputCount,size(theoricalTheta,1)) * noise - noise /2) * theoricalTheta;
+  Y= (X + rand(learningSetCount,length(theoricalTheta)) * noise - noise /2) * theoricalTheta;
 end;
 
-inputCount = 100;
-theoricalTheta = [1;2;3];
-[X,Y] = generateInputOutput(inputCount, theoricalTheta);
 
-precisionStep = 0.01
-[gradientTheta, costData, gradientX, gradientY] = applyGradientDescent(X,Y,precisionStep);
+learningSetCount = 100;
+theoricalTheta = rand(5,1) - 0.5;
+regularizationWeights = [0;00;00;0;0];
 
-equationTheta = applyEquationRegression(X,Y);
+[X,Y] = generateInputOutput(learningSetCount, theoricalTheta);
 
+
+gradientDescentStep = 0.01
+costStabilityDiff = 0.00001
+[gradientTheta, costData, gradientX, gradientY] = applyGradientDescent(X,Y,gradientDescentStep, costStabilityDiff, regularizationWeights);
+
+equationTheta = applyEquationResolution(X,Y,regularizationWeights);
+
+
+
+%--Display--
 figure('Position', [300, 300, 1200, 500]);
+abscisse = 1:learningSetCount;
 
 subplot(1,3,1)
 plot((1:length(costData)), costData)
 title('Fonction Coût Gradient')
 
 subplot(1,3,2)
-plot(gradientX(:,1),gradientY,'x','DisplayName','Input');
+plot(normalize(abscisse),gradientY,'x','DisplayName','Input');
 hold on;
-plot(gradientX(:,1),gradientX * gradientTheta, 'DisplayName','Predicted');
+plot(normalize(abscisse),gradientX * gradientTheta, 'DisplayName','Predicted');
 legend('show')
 title('Gradient Descent')
 
 subplot(1,3,3)
-plot(X(:,1),Y,'x','DisplayName','Input');
+plot(abscisse,Y,'x','DisplayName','Input');
 hold on;
-plot(X(:,1),X * equationTheta, 'DisplayName','Predicted');
+plot(abscisse,X * equationTheta, 'DisplayName','Predicted');
 legend('show')
 title('Equation')

@@ -1,3 +1,4 @@
+  %-- normalize matrix values between -1 and 1
   function [Xn] = normalize(X) 
     for i=1:size(X,2)
       diff = (max(X(:,i)) - min(X(:,i)));
