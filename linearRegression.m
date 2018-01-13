@@ -14,7 +14,7 @@ end;
 
 learningSetCount = 100;
 theoricalTheta = rand(5,1) - 0.5;
-regularizationWeights = [0;00;00;0;0];
+regularizationWeights = [0;00;00;300;300];
 
 [X,Y] = generateInputOutput(learningSetCount, theoricalTheta);
 
