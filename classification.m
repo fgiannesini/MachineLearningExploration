@@ -2,8 +2,9 @@ clear all;
 close all;
 
 function [X,Y] = initData(origin, pointsCount, value)
-  noise = rand(pointsCount, 2) - 0.5;
-  X = ones(pointsCount,2) .* origin + noise;
+  %noise = rand(pointsCount, 3) - 0.5;
+  noise = 0;
+  X = [ones(pointsCount,1) (ones(pointsCount,2) .* origin)] + noise;
   Y = ones(pointsCount, 1) * value;
 end
 
@@ -17,6 +18,8 @@ origin2 = [1 5];
 
 X = [X1;X2];
 Y = [Y1;Y2];
+
+X = normalize(X);
 
 theta = rand(size(X,2),1);
 gradientDescentStep = 0.01;
@@ -35,12 +38,14 @@ theta
 
 figure('Position', [200, 200, 1200, 500])
 subplot(1,2,1)
-plot(X1(:,1),X1(:,2),'x')
+zeroIndexes = find(Y == 0);
+plot(X(zeroIndexes,2),X(zeroIndexes,3),'x')
 hold on;
-plot(X2(:,1),X2(:,2),'o')
+oneIndexes = find(Y == 1);
+plot(X(oneIndexes,2),X(oneIndexes,3),'o')
 hold on;
-%abscisse = 1:1:max(X,1);
-%plot(abscisse, theta' * [abscisse; ones(1,pointsCount)])
+abscisse = min(X(:,2)):0.1:max(X(:,2));
+plot(abscisse, (-theta(2) * abscisse - theta(1))/theta(3))
 
 subplot(1,2,2)
 plot(1:length(cost),cost)
