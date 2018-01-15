@@ -1,21 +1,23 @@
 clear all;
 close all;
 
-function [X,Y] = initData(origin, pointsCount, value)
-  noise = normrnd(zeros(pointsCount,2),ones(pointsCount, 2));
+function [X,Y] = initData(origin, pointsCount, noiseAmplitude, value)
+  noise = normrnd(zeros(pointsCount,2) + noiseAmplitude,ones(pointsCount, 2)* noiseAmplitude);
   X = [ones(pointsCount,2) .* origin] + noise;
-  X= [ones(pointsCount,1) X];
+  X = [ones(pointsCount,1) X X(:,1).*X(:,2) X.^2];
   Y = ones(pointsCount, 1) * value;
 end
 
-pointsCount = 10;
+pointsCount = 100;
 
-origin1 = [1 5];
-[X1,Y1] = initData(origin1, pointsCount, 1);
+origin1 = [3 3];
+[X1,Y1] = initData(origin1, pointsCount, 1, 1);
 
-origin2 = [5 1];
-[X2,Y2] = initData(origin2, pointsCount, 0);
+origin2 = [3 3];
+[X2,Y2] = initData(origin2, pointsCount, 7, 0);
   
+regularizationWeights = [0;0;0;300;00;00];
+
 X = [X1;X2];
 Y = [Y1;Y2];
 
@@ -27,15 +29,13 @@ costStabilityDiff = 0.0001;
 
 for i=1:1000
   estimationFunction = (1./(1+exp(-X * theta)));
-  preCost = Y .* log(estimationFunction) + (1-Y) .* log(1-estimationFunction);
-  cost(i) = -1/size(X,1) * sum(preCost);
+  cost(i) = -1/size(X,1) * sum(Y .* log(estimationFunction) + (1-Y) .* log(1-estimationFunction)) + 1/(2*size(X,1)) * sum(regularizationWeights.*theta.^2);
   if length(cost)> 1 && abs(cost(i) - cost(i-1))<costStabilityDiff
     break;
    end
-   theta = theta - gradientDescentStep * sum((estimationFunction - Y) .* X)';
+   theta = theta - gradientDescentStep * sum((estimationFunction - Y) .* X)' - gradientDescentStep/size(X,1) * theta .* regularizationWeights;
 end
 
-theta
 
 figure('Position', [200, 200, 1200, 500])
 subplot(1,2,1)
@@ -45,9 +45,7 @@ hold on;
 oneIndexes = find(Y == 1);
 plot(X(oneIndexes,2),X(oneIndexes,3),'o')
 hold on;
-%abscisse = min(X(:,2)):0.1:max(X(:,2));
-%plot(abscisse, (-theta(2) * abscisse - theta(1))/theta(3))
-ezplot(@(a,b) theta(1) + a *theta(2) + b* theta(3),[min(X(:,2)),max(X(:,2)), min(X(:,3)),max(X(:,3))])
+ezplot(@(a,b) theta(1) + a .* theta(2) + b .* theta(3) + a .* b .* theta(4) + a.^2 * theta(5) + b.^2 * theta(6) ,[min(X(:,2)),max(X(:,2)), min(X(:,3)),max(X(:,3))])
 
 subplot(1,2,2)
 plot(1:length(cost),cost)
