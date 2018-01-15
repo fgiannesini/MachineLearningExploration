@@ -2,18 +2,19 @@ clear all;
 close all;
 
 function [X,Y] = initData(origin, pointsCount, value)
-  %noise = rand(pointsCount, 3) - 0.5;
-  noise = 0;
-  X = [ones(pointsCount,1) (ones(pointsCount,2) .* origin)] + noise;
+  noise = normrnd(zeros(pointsCount,2),ones(pointsCount, 2));
+  %noise = rand(pointsCount, 2) - 0.5;
+  X = [ones(pointsCount,2) .* origin] + noise;
+  X= [ones(pointsCount,1) X];
   Y = ones(pointsCount, 1) * value;
 end
 
 pointsCount = 10;
 
-origin1 = [5 1];
+origin1 = [1 5];
 [X1,Y1] = initData(origin1, pointsCount, 1);
 
-origin2 = [1 5];
+origin2 = [5 1];
 [X2, Y2] = initData(origin2, pointsCount, 0);
 
 X = [X1;X2];
@@ -26,8 +27,9 @@ gradientDescentStep = 0.01;
 costStabilityDiff = 0.0001;
 
 for i=1:1000
-  estimationFunction = (1/(1+exp(-X * theta)))';
-  cost(i) = -1/size(X,1) * sum(Y .* log(estimationFunction) + (1-Y) .* log(1-estimationFunction));
+  estimationFunction = (1./(1+exp(-X * theta)));
+  preCost = Y .* log(estimationFunction) + (1-Y) .* log(1-estimationFunction);
+  cost(i) = -1/size(X,1) * sum(preCost);
   if length(cost)> 1 && abs(cost(i) - cost(i-1))<costStabilityDiff
     break;
    end
