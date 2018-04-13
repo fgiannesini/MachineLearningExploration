@@ -9,9 +9,9 @@ data = load('mnist.mat');
 %data.testX is a (10000,784) matrix which contains the pixel data for testing
 %data.testY is a (1,10000) matrix which contains the labels for the test set
 
-X= data.trainX;
-i=reshape(X(1,:),28,28)';
-image(i)
+%X= data.trainX;
+%i=reshape(X(1,:),28,28)';
+%image(i)
 
 layerSize = [1 6 3];
 input = [[1];[2];[3]];
@@ -30,7 +30,9 @@ end;
 computedOutput = computeOutputNeural(input, layerSize, theta);
 cout(1) = computeCostNeural(output, computedOutput);
 for coutIndex=2:2000
-  theta = derivateCostNeural(theta, layerSize, input, output);
+  thetaWithDerivative = derivateCostNeural(theta, layerSize, input, output);
+  thetaWithBackprop = backPropagateNeural(theta, layerSize, input, output);
+  theta = thetaWithDerivative;
   computedOutput = computeOutputNeural(input, layerSize, theta);
   cout(coutIndex) = computeCostNeural(output, computedOutput);
 %  if abs(cout(coutIndex) - cout(coutIndex-1)) < 0.0001
@@ -38,4 +40,6 @@ for coutIndex=2:2000
 %  end;
 end;
 
-plot((1:length(cout)), cout);
+
+
+%plot((1:length(cout)), cout);

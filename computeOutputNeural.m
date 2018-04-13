@@ -7,8 +7,7 @@ function [computedOutput] = computeOutputNeural(inputData, layerSize, theta)
       secondLayerSize = layerSize(layerIndex + 1);
       thetaLayer = reshape(theta(layerIndex, (1:firstLayerSize * secondLayerSize)), firstLayerSize, secondLayerSize);
       newResult = result * thetaLayer;
-      newResult = 1./(1 + exp(-newResult)) ;
-      result = newResult;
+      result = 1./(1 + exp(-newResult)) ;
     end;
     computedOutput(inputIndex,:) = result;
   end;
