@@ -29,10 +29,10 @@ end;
 
 computedOutput = computeOutput(input, layerSize, theta);
 cout(1) = computeCost(output, computedOutput);
-for coutIndex=2:2000
-  thetaWithDerivative = derivateCost(theta, layerSize, input, output);
+for coutIndex=2:100
+  %thetaWithDerivative = derivateCost(theta, layerSize, input, output);
   thetaWithBackprop = backPropagate(theta, layerSize, input, output);
-  theta = thetaWithDerivative;
+  theta = thetaWithBackprop;
   computedOutput = computeOutput(input, layerSize, theta);
   cout(coutIndex) = computeCost(output, computedOutput);
 %  if abs(cout(coutIndex) - cout(coutIndex-1)) < 0.0001
@@ -42,4 +42,4 @@ end;
 
 
 
-%plot((1:length(cout)), cout);
+plot((1:length(cout)), cout);
