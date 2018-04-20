@@ -2,9 +2,10 @@ function [newTheta] = derivateCost(theta, layerSize, input, output)
   epsilon = 0.0001;
   grad = zeros(size(theta));
   for layerIndex = 1 : length(layerSize)-1
-    firstLayerSize = layerSize(layerIndex);
+    firstLayerSize = layerSize(layerIndex) + 1;
     secondLayerSize = layerSize(layerIndex + 1);
     for thetaIndex = 1: firstLayerSize * secondLayerSize
+
       maxTheta = theta;
       maxTheta(layerIndex, thetaIndex) += epsilon;
       maxComputedOutput = computeOutput(input, layerSize, maxTheta);

@@ -13,37 +13,34 @@ close all;
 %i=reshape(X(1,:),28,28)';
 %image(i)
 
-layerSize = [1 3 3];
-input = [[1];[2];[3]];
-output = [[1,0,0];[0,1,0];[0,0,1]];
+  layerSize = [1 18 9];
+  input = [[1];[2];[3];[4];[5];[6];[7];[8];[9]];
+  output = [[1,0,0,0,0,0,0,0,0];[0,1,0,0,0,0,0,0,0];[0,0,1,0,0,0,0,0,0];[0,0,0,1,0,0,0,0,0];[0,0,0,0,1,0,0,0,0];[0,0,0,0,0,1,0,0,0];[0,0,0,0,0,0,1,0,0];[0,0,0,0,0,0,0,1,0];[0,0,0,0,0,0,0,0,1]];
 
-maxThetaCount = 0;
-for layerIndex = 1:length(layerSize)-1
-  maxThetaCount = max(maxThetaCount, layerSize(layerIndex) * layerSize(layerIndex +1));
-end;
-theta = zeros(length(layerSize)-1, maxThetaCount);
-for layerIndex = 1:length(layerSize)-1
-  layerCount = layerSize(layerIndex) * layerSize(layerIndex +1);
-  theta(layerIndex, 1:layerCount) = rand(1,layerCount);
-end;
+  theta = initThetaRand(layerSize);
 
-%theta = [1,2,0,0,0,0;3,4,5,6,7,8];
-
-computedOutput = computeOutput(input, layerSize, theta);
-cout(1) = computeCost(output, computedOutput);
-
-for coutIndex = 2:5000
-%  thetaDerivative = derivateCost(theta, layerSize, input, output);
-  theta = backPropagate(theta, layerSize, input, output);
-  
   computedOutput = computeOutput(input, layerSize, theta);
-  cout(coutIndex) = computeCost(output, computedOutput);
+  cout(1) = computeCost(output, computedOutput);
+
+  for coutIndex = 2:5000
+  %  thetaDerivative= derivateCost(theta, layerSize, input, output);
+    theta = backPropagate(theta, layerSize, input, output);
+  %  if abs(sum(sum(thetaDerivative - theta))) > 0.001
+  %    disp('error on turn');
+  %    disp(coutIndex);
+  %    disp(theta);
+  %    disp(thetaDerivative);
+  %    break;
+  %  end;
+    
+    computedOutput = computeOutput(input, layerSize, theta);
+    cout(coutIndex) = computeCost(output, computedOutput);
+    
+    if abs(cout(coutIndex) - cout(coutIndex-1)) < 0.0001
+      break;
+    end;
+  end;
+
+ [M I] = max(computedOutput')
   
-%  if abs(cout(coutIndex) - cout(coutIndex-1)) < 0.0001
-%    break;
-%  end;
-end;
-
-
-
-plot((1:length(cout)), cout);
+  plot(1:length(cout), cout);
