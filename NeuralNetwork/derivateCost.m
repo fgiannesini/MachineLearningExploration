@@ -1,4 +1,4 @@
-function [newTheta] = derivateCost(theta, layerSize, input, output)
+function [newTheta] = derivateCost(theta, layerSize, input, output, regularizationCoeff)
   epsilon = 0.0001;
   grad = zeros(size(theta));
   for layerIndex = 1 : length(layerSize)-1
@@ -9,14 +9,16 @@ function [newTheta] = derivateCost(theta, layerSize, input, output)
       maxTheta = theta;
       maxTheta(layerIndex, thetaIndex) += epsilon;
       maxComputedOutput = computeOutput(input, layerSize, maxTheta);
-      maxCout = computeCost(output, maxComputedOutput);
+      maxCout = computeCost(output, maxComputedOutput,theta, regularizationCoeff);
 
       minTheta = theta;
       minTheta(layerIndex, thetaIndex) -= epsilon;
       minComputedOutput = computeOutput(input, layerSize, minTheta);
-      minCout = computeCost(output, minComputedOutput);
+      minCout = computeCost(output, minComputedOutput, theta, regularizationCoeff);
       grad(layerIndex,thetaIndex) = (maxCout - minCout) / (2 * epsilon);
     end;
   end;
-  newTheta = theta - grad;
+  regularizationMatrix = ones(size(theta)) * regularizationCoeff;
+  regularizationMatrix(1:layerSize(1) + 1) = 0;
+  newTheta = theta - grad + regularizationMatrix;
 end;

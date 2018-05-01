@@ -1,4 +1,4 @@
-function [newTheta] = backPropagate(theta,layerSize,inputData, output)
+function [newTheta, computedResult] = backPropagate(theta,layerSize,inputData, output, regularizationCoeff)
   thetaGrad = zeros(size(theta));
   maxLayerSize = max(layerSize(1:length(layerSize)));
   for inputIndex = 1: size(inputData,1)
@@ -28,5 +28,8 @@ function [newTheta] = backPropagate(theta,layerSize,inputData, output)
       currentLayerError = nextLayerError(2:length(nextLayerError));
     end;
   end;
-  newTheta = theta - thetaGrad;
+  
+  regularizationMatrix = ones(size(theta)) * regularizationCoeff;
+  regularizationMatrix(1:layerSize(1) + 1) = 0;
+  newTheta = theta - thetaGrad + regularizationMatrix;
 end;
