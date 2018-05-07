@@ -2,16 +2,16 @@ clc;
 clear all;
 close all;
 
+##Input dans un repere 2D générés aléatoirement
 inputSize = 100;
 input = [rand(1,inputSize) * 5 ; rand(1,inputSize) * 5];
 
-
-kCount = 3;
-
+##itération sur le nombre de Kcenters
 for kCount = 2:10
   
   bestCost = Inf;
 
+## Boucle pour tester plusieurs initialisations aléatoires de kcenters
   for iter = 1 : round(inputSize/10)
 
     kCenters = initKcenters(kCount, input);
