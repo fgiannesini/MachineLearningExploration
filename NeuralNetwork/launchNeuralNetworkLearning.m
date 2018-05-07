@@ -4,7 +4,7 @@ function [theta, cout] = launchNeuralNetworkLearning(layerSize, input, output, r
   computedOutput = computeOutput(input, layerSize, theta);
   cout(1) = computeCost(output, computedOutput, theta, regularizationCoeff);
 
-  for coutIndex = 2:5000
+  for coutIndex = 2:5
 %  thetaDerivative= derivateCost(theta, layerSize, input, output, regularizationCoeff);
   
   theta = backPropagate(theta, layerSize, input, output, regularizationCoeff);

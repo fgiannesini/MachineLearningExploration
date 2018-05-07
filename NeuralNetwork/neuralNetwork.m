@@ -17,33 +17,38 @@ close all;
 %input = [[1];[2];[3];[4];[5];[6];[7];[8];[9]];
 %output = [[1,0,0,0,0,0,0,0,0];[0,1,0,0,0,0,0,0,0];[0,0,1,0,0,0,0,0,0];[0,0,0,1,0,0,0,0,0];[0,0,0,0,1,0,0,0,0];[0,0,0,0,0,1,0,0,0];[0,0,0,0,0,0,1,0,0];[0,0,0,0,0,0,0,1,0];[0,0,0,0,0,0,0,0,1]];
 
-inputSize = 30; %Tuned
-hiddenLayerCount = 17; %Tuned
+  inputSize = 300; %Tuned
+  hiddenLayerCount = 15; %Tuned
 
-input = rand(inputSize,1)*9.5;
-output = generateOutput(input);
+  input = rand(inputSize,1)*9.5;
+  output = generateOutput(input);
 
-crossValidationInput = rand(inputSize * 0.25,1)*9.5;
-crossValidationOutput = generateOutput(crossValidationInput);
+  crossValidationInput = rand(inputSize * 0.25,1)*9.5;
+  crossValidationOutput = generateOutput(crossValidationInput);
 
-layerSize = [1 hiddenLayerCount 10];  
+
+  regularizationCoeff = 0;
+  cursor = 1;
+
+##for  hiddenLayerCount = 1:100
+
+  layerSize = [1 hiddenLayerCount 10];   
   
-initialTheta = initThetaRand(layerSize);
-  
-for regularizationCoeff = 0.1:0.1:1;
-  
+  initialTheta = initThetaRand(layerSize);
+
   [theta,learningCost] = launchNeuralNetworkLearning(layerSize, input, output, regularizationCoeff, initialTheta);
 
   crossValidationComputedOutput = computeOutput(crossValidationInput, layerSize, theta);  
   [maxValues,maxIndexes] = max(crossValidationComputedOutput');
   crossValidationOutputIndexes = maxIndexes - 1;
-  precision(hiddenLayerCount) = length(find(crossValidationOutputIndexes - round(crossValidationInput)' == 0))/length(crossValidationInput);
+  precision(cursor) = length(find(crossValidationOutputIndexes - round(crossValidationInput)' == 0))/length(crossValidationInput);
   
   crossValidationCost = computeCost(crossValidationOutput, crossValidationComputedOutput, theta, regularizationCoeff);
   
-  costPlot(1,regularizationCoeff * 10) = learningCost(length(learningCost)-1);
-  costPlot(2,regularizationCoeff * 10) = crossValidationCost;
-end;
+  costPlot(1,cursor) = learningCost(length(learningCost)-1);
+  costPlot(2,cursor) = crossValidationCost;
+  cursor++;
+##end;
 
 plot(1:length(costPlot), costPlot(1,:));
 hold on;

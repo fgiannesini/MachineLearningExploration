@@ -18,7 +18,7 @@ function [newTheta] = derivateCost(theta, layerSize, input, output, regularizati
       grad(layerIndex,thetaIndex) = (maxCout - minCout) / (2 * epsilon);
     end;
   end;
-  regularizationMatrix = ones(size(theta)) * regularizationCoeff;
+  regularizationMatrix = ones(size(theta)) * regularizationCoeff ./ size(output,1);
   regularizationMatrix(1:layerSize(1) + 1) = 0;
   newTheta = theta - grad + regularizationMatrix;
 end;
